@@ -12,6 +12,8 @@ do you see pts/x?
 Then you're golden.
 
 standard disclaimer.
+
+This is for educational purposes / testing.
 Only use this where you are authorized to do so.
 I am not responsible for how you use this.
 
