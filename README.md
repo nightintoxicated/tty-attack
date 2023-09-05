@@ -1,5 +1,7 @@
 # tty-attack
 This is a proof of concept for pts-attacks, it currently works with pts terminal connections.
+[New Feature]: disconnect a users terminal session via a hard or soft kill signal (not shown in gif)
+
 Click the gif for a better view!
 ![](https://github.com/lewisrobson/tty-attack/blob/main/tty-attack.gif)
 
@@ -12,5 +14,6 @@ Then you're golden.
 standard disclaimer.
 Only use this where you are authorized to do so.
 I am not responsible for how you use this.
+
 
 
