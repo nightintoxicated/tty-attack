@@ -6,11 +6,6 @@ Click the gif for a better view!
 ![](https://github.com/lewisrobson/tty-attack/blob/main/tty-attack.gif)
 
 
-Q. Am i able to use this?
-A. go to your terminal and type: who | awk '{print $2}'
-do you see pts/x?
-Then you're golden.
-
 
 standard disclaimer.
 
@@ -19,13 +14,15 @@ It has been made in order to demonstrate how a terminal
 session can be tampered with and to provide insight
 into the inner workings of terminal sessions so that
 this can be acknowledged as a security issue that
-should be considered, and mitigated against where 
-possible, this has been developed in a test lab.
+should be considered and mitigated against where 
+possible, this has been developed in a test lab environment
+and I advise you to also only use this in a test environment
+that you have permission to use.
 
 
 Only use this when and where you are authorized to do so.
-I believe this will only be used in such situations where it has been approved.
-I am not responsible for how you use this.
+I am not responsible for how you use this and
+I believe it will only be used in situations where it has been approved.
 
 
 
