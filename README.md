@@ -22,7 +22,9 @@ this can be acknowledged as a security issue that
 should be considered, and mitigated against where 
 possible, this has been developed in a test lab.
 
+
 Only use this when and where you are authorized to do so.
+I believe this will only be used in such situations where it has been approved.
 I am not responsible for how you use this.
 
 
