@@ -27,7 +27,7 @@ foreach my $item (@targets) {
 my $size = @user_list;
 my $i = 0;
 
-print "users | tty\n";
+print "users | pts\n";
 print "-----------\n";
 while ($i < $size) {
 	print "$i: @user_list[$i]    @term_list[$i]\n";
@@ -69,7 +69,7 @@ if($sel == "2"){
 	print "freezing /dev/pts/$target_num\n";
 	print "press CTRL+C to stop\n";
 	my $file = "/dev/pts/$target_num";
-	open(my $fh, '<', $file) or die "could not open tty\n";
+	open(my $fh, '<', $file) or die "could not open pts\n";
 	while (my $line = <$fh>) {
 		print $line. "\n";
 	}
@@ -81,7 +81,7 @@ if($sel == "3"){
 	print "type a . on a newline or press CTRL+C to stop\n";
 
 	my $file = "/dev/pts/$target_num";
-	open(my $fh, ">>", $file) or die "could not open tty\n";
+	open(my $fh, ">>", $file) or die "could not open pts\n";
 	
 	while (1) {
 	my $writing = <>;
@@ -101,7 +101,7 @@ if($sel == "4"){
 	print "type a . on a newline or press CTRL+C to stop\n";
 
 	my $file = "/dev/pts/$target_num";
-	open(my $fh, ">>", $file) or die "could not open tty\n";
+	open(my $fh, ">>", $file) or die "could not open pts\n";
 	
 	while (1) {
 	my $writing = <>;
