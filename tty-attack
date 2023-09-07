@@ -70,36 +70,38 @@ if ($target_num =~ /tty\/(\d+)/) {
 }
 
 print "debug two i see $target_num \n";
-
+##############################################################################################
 if($sel == "1"){
 
-if (@term_list[$target_num] =~ /pts/) {
-	print "fuzzing /dev/pts/$target_num\n";
+if ($target_num =~ /pts/) {
+	print "fuzzing /dev/$target_num\n";
 	print "press CTRL+C to stop\n";
-	copy("/dev/urandom", "/dev/pts/$target_num") or die "cannot fuzz\n";
+	copy("/dev/urandom", "/dev/$target_num") or die "cannot fuzz\n";
 }
 
-if (@term_list[$target_num] =~ /tty/) {
+if ($target_num =~ /tty/) {
 	print "fuzzing /dev/$target_num\n";
 	print "press CTRL+C to stop\n";
 	copy("/dev/urandom", "/dev/$target_num") or die "cannot fuzz\n";
 }
 }
 
-##########################
+##############################################################################################
 if($sel == "2"){
-if (@term_list[$target_num] =~ /pts/) {
+if ($target_num =~ /pts/) {
 
-	print "freezing /dev/pts/$target_num\n";
+	print "freezing /dev/$target_num\n";
 	print "press CTRL+C to stop\n";
-	my $file = "/dev/pts/$target_num";
+	my $file = "/dev/$target_num";
 	open(my $fh, '<', $file) or die "could not open pts\n";
 	while (my $line = <$fh>) {
+		print $line. "\n";
+		print $line. "\n";
 		print $line. "\n";
 	}
 }
 
-if (@term_list[$target_num] =~ /tty/) {
+if ($target_num =~ /tty/) {
 	print "freezing /dev/$target_num\n";
 	print "press CTRL+C to stop\n";
 	my $file = "/dev/$target_num";
@@ -118,13 +120,13 @@ else {
 }
 }
 
-#########################
+##############################################################################################
 if($sel == "3"){
-	print "starting message sending to /dev/pts/$target_num\n";
+	print "starting message sending to /dev/$target_num\n";
 	print "type a . on a newline or press CTRL+C to stop\n";
 
-if (@term_list[$target_num] =~ /pts/) {
-	my $file = "/dev/pts/$target_num";
+if ($target_num =~ /pts/) {
+	my $file = "/dev/$target_num";
 	open(my $fh, ">>", $file) or die "could not open pts\n";
 	
 	while (1) {
@@ -141,7 +143,7 @@ if (@term_list[$target_num] =~ /pts/) {
 
 
 
-if (@term_list[$target_num] =~ /tty/) {
+if ($target_num =~ /tty/) {
 	my $file = "/dev/$target_num";
 	open(my $fh, ">>", $file) or die "could not open pts\n";
 	
@@ -159,14 +161,15 @@ if (@term_list[$target_num] =~ /tty/) {
 	}
 
 
+##############################################################################################
 
 if($sel == "4"){
-	print "starting message sending to /dev/pts/$target_num\n";
+	print "starting message sending to /dev/$target_num\n";
 	print "type a . on a newline or press CTRL+C to stop\n";
 
-if (@term_list[$target_num] =~ /pts/) {
+if ($target_num =~ /pts/) {
 
-	my $file = "/dev/pts/$target_num";
+	my $file = "/dev/$target_num";
 	open(my $fh, ">>", $file) or die "could not open pts\n";
 	
 	while (1) {
@@ -184,7 +187,7 @@ if (@term_list[$target_num] =~ /pts/) {
 
 
 
-if (@term_list[$target_num] =~ /tty/) {
+if ($target_num =~ /tty/) {
 
 	my $file = "/dev/$target_num";
 	open(my $fh, ">>", $file) or die "could not open pts\n";
@@ -202,6 +205,7 @@ if (@term_list[$target_num] =~ /tty/) {
 		}
 	}
 
+##############################################################################################
 
  #TODO isnt killing ttys properly
 if($sel eq "5"){
@@ -213,19 +217,23 @@ if($sel eq "5"){
     exit(0);
   }
   print "killing user session\n\n";
+  print "DEBUG target_num is $target_num\n";
 
-if (@term_list[$target_num] =~ /tty/) {
-  my $command = "ps -aux|egrep -vi \"grep\" | egrep \"pts/$target_num\" | awk '{print \$2}'";
-  }
+  #if ($target_num =~ /pts/) {
+  #my $command = "ps -aux|egrep -vi \"grep\" | egrep \"$target_num\" | awk '{print \$2}'";
+  #}
 
-if (@term_list[$target_num] =~ /tty/) {
-  my $command = "ps -aux|egrep -vi \"grep\" | egrep \"tty/$target_num\" | awk '{print \$2}'";
-  }
+  #if ($target_num =~ /tty/) {
+  my $command = "ps -aux|egrep -vi \"grep\" | egrep \"$target_num\" | awk '{print \$2}'";
+  #print "\n\n\n\n";
+  #print "$command\n";
+  #}
 
 
   my @pids = qx($command);
   foreach (@pids) {
     chomp $_;
+    #print $_;
     my $xx = qx(ps $_);
     print "Killing: $xx \n";
     #hard kill
