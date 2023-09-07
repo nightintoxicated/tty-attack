@@ -17,7 +17,7 @@ foreach my $item (@users) {
 my @user_list;
 my @term_list;
 foreach my $item (@targets) {
-  if($item =~ "pts") {
+  if($item =~ "pts" || $item =~ "tty") {
   push(@term_list, $item);
   } else {
     push (@user_list, $item);
@@ -57,15 +57,39 @@ if ($sel ne "1" && $sel ne "2" && $sel ne "3" && $sel ne "4" && $sel ne "5") {
 	exit (0);
 }
 
-print "terminal is pts $target_num\n";
+print "terminal is $target_num\n";
+#print "$target_num nuber is now @term_list[$target_num]\n";
+$target_num = @term_list[$target_num];
+print "debug i see $target_num\n";
+
+if ($target_num =~ /pts\/(\d+)/) {
+	print"found a pts\n";
+}
+if ($target_num =~ /tty\/(\d+)/) {
+	print "i see a tty\n";
+}
+
+print "debug two i see $target_num \n";
+
 if($sel == "1"){
+
+if (@term_list[$target_num] =~ /pts/) {
 	print "fuzzing /dev/pts/$target_num\n";
 	print "press CTRL+C to stop\n";
 	copy("/dev/urandom", "/dev/pts/$target_num") or die "cannot fuzz\n";
-
 }
 
+if (@term_list[$target_num] =~ /tty/) {
+	print "fuzzing /dev/$target_num\n";
+	print "press CTRL+C to stop\n";
+	copy("/dev/urandom", "/dev/$target_num") or die "cannot fuzz\n";
+}
+}
+
+##########################
 if($sel == "2"){
+if (@term_list[$target_num] =~ /pts/) {
+
 	print "freezing /dev/pts/$target_num\n";
 	print "press CTRL+C to stop\n";
 	my $file = "/dev/pts/$target_num";
@@ -75,11 +99,31 @@ if($sel == "2"){
 	}
 }
 
+if (@term_list[$target_num] =~ /tty/) {
+	print "freezing /dev/$target_num\n";
+	print "press CTRL+C to stop\n";
+	my $file = "/dev/$target_num";
+	open(my $fh, '<', $file) or die "could not open pts\n";
+	while (my $line = <$fh>) {
+		print $line. "\n";
+		print $line. "\n";
+		print $line. "\n";
+	}
+}
 
+
+
+else {
+	print "error finding terminal, exiting\n";
+}
+}
+
+#########################
 if($sel == "3"){
 	print "starting message sending to /dev/pts/$target_num\n";
 	print "type a . on a newline or press CTRL+C to stop\n";
 
+if (@term_list[$target_num] =~ /pts/) {
 	my $file = "/dev/pts/$target_num";
 	open(my $fh, ">>", $file) or die "could not open pts\n";
 	
@@ -96,9 +140,31 @@ if($sel == "3"){
 		}
 
 
+
+if (@term_list[$target_num] =~ /tty/) {
+	my $file = "/dev/$target_num";
+	open(my $fh, ">>", $file) or die "could not open pts\n";
+	
+	while (1) {
+	my $writing = <>;
+	chomp $writing;
+	if ($writing eq ".") {
+			close $fh or print "cannot close file handle\n";
+			exit 0;
+		}
+		print $fh $writing, "\n" or die "couldnt write\n";
+		}
+
+		}
+	}
+
+
+
 if($sel == "4"){
 	print "starting message sending to /dev/pts/$target_num\n";
 	print "type a . on a newline or press CTRL+C to stop\n";
+
+if (@term_list[$target_num] =~ /pts/) {
 
 	my $file = "/dev/pts/$target_num";
 	open(my $fh, ">>", $file) or die "could not open pts\n";
@@ -116,6 +182,28 @@ if($sel == "4"){
 		}
 
 
+
+
+if (@term_list[$target_num] =~ /tty/) {
+
+	my $file = "/dev/$target_num";
+	open(my $fh, ">>", $file) or die "could not open pts\n";
+	
+	while (1) {
+	my $writing = <>;
+	chomp $writing;
+	if ($writing eq ".") {
+			close $fh or print "cannot close file handle\n";
+			exit 0;
+		}
+		print $fh $writing or die "couldnt write\n";
+		}
+
+		}
+	}
+
+
+ #TODO isnt killing ttys properly
 if($sel eq "5"){
   print "soft or hard kill?\n";
   print "enter [soft] or [hard]\n";
@@ -125,7 +213,16 @@ if($sel eq "5"){
     exit(0);
   }
   print "killing user session\n\n";
+
+if (@term_list[$target_num] =~ /tty/) {
   my $command = "ps -aux|egrep -vi \"grep\" | egrep \"pts/$target_num\" | awk '{print \$2}'";
+  }
+
+if (@term_list[$target_num] =~ /tty/) {
+  my $command = "ps -aux|egrep -vi \"grep\" | egrep \"tty/$target_num\" | awk '{print \$2}'";
+  }
+
+
   my @pids = qx($command);
   foreach (@pids) {
     chomp $_;
@@ -146,4 +243,5 @@ if($sel eq "5"){
   print $result, "\n";
   }
 }
+
 
