@@ -1,10 +1,11 @@
 #!/usr/bin/perl
-#use strict;
-#use warnings;
+use strict;
+use warnings;
 use File::Copy;
 
 my @users = qx(who);
 my @targets;
+my @temp;
 #because the user may be logged in more than once, we will split the arrays into seperate lists rather than hashes
 foreach my $item (@users) {
   @temp = split / /, $item;
@@ -30,7 +31,7 @@ my $i = 0;
 print "users | pts\n";
 print "-----------\n";
 while ($i < $size) {
-	print "$i: @user_list[$i]    @term_list[$i]\n";
+	print "$i: $user_list[$i]    $term_list[$i]\n";
 	$i++;
 }
 
@@ -59,7 +60,7 @@ if ($sel ne "1" && $sel ne "2" && $sel ne "3" && $sel ne "4" && $sel ne "5") {
 
 print "terminal is $target_num\n";
 #print "$target_num nuber is now @term_list[$target_num]\n";
-$target_num = @term_list[$target_num];
+$target_num = $term_list[$target_num];
 print "debug i see $target_num\n";
 
 if ($target_num =~ /pts\/(\d+)/) {
